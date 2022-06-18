@@ -23,7 +23,7 @@ jobs:
       run: docker run -e CI=true marcelomg123/react-test npm test
 
     - name: Build Docker images (client)
-     run: docker build -t marcelomg123/multi-client ./client
+      run: docker build -t marcelomg123/multi-client ./client
     - name: Build Docker images (nginx)
       run: docker build -t marcelomg123/multi-nginx ./nginx
     - name: Build Docker images (server)
