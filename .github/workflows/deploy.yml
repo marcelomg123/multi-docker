@@ -1,0 +1,35 @@
+name: Deploy app
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Docker Login
+    - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and Test
+    - run: docker build -t marcelomg123/react-test -f ./client/Dockerfile.dev ./client
+    - run: docker run -e CI=true marcelomg123/react-test npm test
+
+    - name: Build Docker images
+    - run: docker build -t marcelomg123/multi-client ./client
+    - run: docker build -t marcelomg123/multi-nginx ./nginx
+    - run: docker build -t marcelomg123/multi-server ./server
+    - run: docker build -t marcelomg123/multi-worker ./worker
+
+    - name: Push Docker images
+    - run: docker push marcelomg123/multi-client
+    - run: docker push marcelomg123/multi-nginx
+    - run: docker push marcelomg123/multi-server
+    - run: docker push marcelomg123/multi-worker
